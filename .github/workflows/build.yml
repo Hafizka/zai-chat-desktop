@@ -81,6 +81,9 @@ jobs:
       - name: Install Pake CLI
         run: npm install -g pake-cli
 
+      - name: Localize interface to Russian (RU)
+        run: node scripts/patch-pake-ru.js
+
       - name: Build Linux packages
         run: |
           pake https://chat.z.ai \
@@ -137,6 +140,9 @@ jobs:
       - name: Install Pake CLI
         run: npm install -g pake-cli
 
+      - name: Localize interface to Russian (RU)
+        run: node scripts/patch-pake-ru.js
+
       - name: Build macOS package
         run: |
           pake https://chat.z.ai \
@@ -145,6 +151,7 @@ jobs:
             --width 1400 \
             --height 900 \
             --show-system-tray \
+            --multi-arch \
             --targets dmg \
             --inject ./inject/style.css \
             --inject ./inject/app.js
@@ -158,7 +165,7 @@ jobs:
 
           # Find .dmg files
           find . -name "*.dmg" -type f | while read file; do
-            mv "$file" "release/ZaiChatDesktop_${PAKE_VER}_x64.dmg"
+            mv "$file" "release/ZaiChatDesktop_${PAKE_VER}_universal.dmg"
           done
 
           ls -la release/
@@ -188,6 +195,9 @@ jobs:
       - name: Install Pake CLI
         run: npm install -g pake-cli
 
+      - name: Localize interface to Russian (RU)
+        run: node scripts/patch-pake-ru.js
+
       - name: Build Windows package
         shell: pwsh
         run: |
@@ -197,6 +207,7 @@ jobs:
             --width 1400 `
             --height 900 `
             --show-system-tray `
+            --installer-language ru-RU `
             --targets msi `
             --inject ./inject/style.css `
             --inject ./inject/app.js
@@ -252,19 +263,25 @@ jobs:
           tag_name: ${{ needs.check.outputs.pake_version }}
           name: "Z.ai Desktop ${{ needs.check.outputs.pake_version }}"
           body: |
-            Z.ai Desktop built with Pake ${{ needs.check.outputs.pake_version }}
+            Z.ai Desktop — сборка на базе [Pake](https://github.com/tw93/Pake) ${{ needs.check.outputs.pake_version }} с русским интерфейсом 🇷🇺
 
-            ## Downloads
+            ## Загрузки
 
-            | Platform | Package |
-            |----------|---------|
-            | Linux | `.deb` (Debian/Ubuntu), `.AppImage` (Universal) |
-            | macOS | `.dmg` (x64) |
-            | Windows | `.msi` (x64) |
+            | Платформа | Пакет |
+            |-----------|-------|
+            | Linux | `.deb` (Debian/Ubuntu), `.AppImage` (универсальный) |
+            | macOS | `.dmg` (Intel & Apple Silicon) |
+            | Windows | `.msi` (x64, установщик на русском) |
 
-            ## Notes
-            - Built using [Pake](https://github.com/tw93/Pake) ${{ needs.check.outputs.pake_version }}
-            - Pake changelog: https://github.com/tw93/Pake/releases/${{ needs.check.outputs.pake_version }}
+            ## Русская локализация
+            - Меню macOS (Файл, Редактирование, Вид, Навигация, Окно, Справка), системный трей и диалоги — на русском языке
+            - Стандартные пункты меню macOS локализуются системой, если язык системы — русский
+            - Веб-интерфейс chat.z.ai переводится на лету встроенным словарём (800+ строк)
+            - Установщик Windows — на русском языке
+
+            ## Примечания
+            - Собрано с помощью [Pake](https://github.com/tw93/Pake) ${{ needs.check.outputs.pake_version }}
+            - Список изменений Pake: https://github.com/tw93/Pake/releases/${{ needs.check.outputs.pake_version }}
           files: release/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
