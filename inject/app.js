@@ -12,11 +12,108 @@
   'use strict';
 
   // ==========================================
+  // НАСТРОЙКИ АВТОПЕРЕВОДА
+  // ==========================================
+  // 1) ОНЛАЙН-ПЕРЕВОДЧИК: строки интерфейса, которых нет в словаре,
+  //    автоматически переводятся бесплатным онлайн-сервисом и запоминаются
+  //    навсегда (localStorage). Отключить: false вместо true.
+  var AUTO_TRANSLATE_ONLINE = true;
+  // 2) УДАЛЁННЫЙ СЛОВАРЬ: файл inject/dictionary.json из вашего репозитория
+  //    подтягивается при каждом запуске. Новые переводы добавляются БЕЗ
+  //    пересборки приложения — дополните файл на GitHub и перезапустите.
+  //    '__REMOTE_DICT_REPO__' автоматически заменяется на адрес вашего
+  //    репозитория при сборке (это делает scripts/patch-pake-ru.js).
+  var REMOTE_DICT_REPO = '__REMOTE_DICT_REPO__';
+
+  // ==========================================
   // СЛОВАРЬ ЛОКАЛИЗАЦИИ (EN -> RU)
   // ==========================================
   // Основа: проект «Русский интерфейс z.ai» (MIT, greasyfork.org/scripts/554969),
   // дополнен и адаптирован для десктопного приложения Z.ai Desktop.
   var DICT = {
+  // --- Дополнение 30.10.2026: строки нового интерфейса Z.ai ---
+  'Home': 'Главная',
+  'Scheduled': 'Расписание',
+  'Cloud': 'Облако',
+  'Recents': 'Недавние',
+  'Send a Message': 'Отправить сообщение',
+  'Send a message': 'Отправить сообщение',
+  'Connect IM': 'Подключить мессенджер',
+  'Starting with a case': 'Начните с готового сценария',
+  'Create via chat': 'Создать через чат',
+  'Library': 'Библиотека',
+  'Plugins': 'Плагины',
+  'Project name': 'Название проекта',
+  'Project Name': 'Название проекта',
+  'Give your project a name': 'Придумайте название проекта',
+  // --- Конец дополнения ---
+  // --- Дополнение 30.10.2026 №2: файлы, «Облако», статусы, кнопки, сценарии ---
+  'Attachment': 'Вложение',
+  'Add file': 'Добавить файл',
+  'Add files': 'Добавить файлы',
+  'Drop files here': 'Перетащите файлы сюда',
+  'Max file size': 'Максимальный размер файла',
+  'Unsupported file': 'Неподдерживаемый файл',
+  'Unsupported file type': 'Неподдерживаемый тип файла',
+  'Import from': 'Импорт из',
+  'Search files': 'Поиск файлов',
+  'No files yet': 'Пока нет файлов',
+  'My Files': 'Мои файлы',
+  'Select': 'Выбрать',
+  'Preview': 'Просмотр',
+  'Move': 'Переместить',
+  'Sort by': 'Сортировка',
+  'Date': 'Дата',
+  'OK': 'ОК',
+  'Apply': 'Применить',
+  'Reset': 'Сбросить',
+  'Clear': 'Очистить',
+  'Clear all': 'Очистить всё',
+  'Previous': 'Назад',
+  'Remove': 'Удалить',
+  'Replace': 'Заменить',
+  'Uploading': 'Загрузка...',
+  'Processing': 'Обработка',
+  'Queued': 'В очереди',
+  'Pending': 'Ожидание',
+  'In progress': 'В процессе',
+  'Completed': 'Завершено',
+  'Success': 'Готово',
+  'Failed': 'Не удалось',
+  'Draft': 'Черновик',
+  'See all': 'Показать все',
+  'Load more': 'Загрузить ещё',
+  'More...': 'Ещё...',
+  'This week': 'На этой неделе',
+  'Last week': 'На прошлой неделе',
+  'This month': 'В этом месяце',
+  'Knowledge Base': 'База знаний',
+  'Agent name': 'Имя агента',
+  'Rename chat': 'Переименовать чат',
+  'Pin chat': 'Закрепить чат',
+  'Unpin chat': 'Открепить чат',
+  'Publish': 'Опубликовать',
+  'Unpublish': 'Отменить публикацию',
+  'Unarchive': 'Разархивировать',
+  'Favorite': 'Избранное',
+  'Add favorite': 'В избранное',
+  'Sync': 'Синхронизировать',
+  'Syncing': 'Синхронизация',
+  'Remaining credits': 'Осталось кредитов',
+  'Credits remaining': 'Осталось кредитов',
+  'Fair use': 'Разумное использование',
+  'Getting started': 'Начало работы',
+  'What can I help with?': 'Чем могу помочь?',
+  'Type a message': 'Введите сообщение',
+  'Type your message': 'Введите сообщение',
+  'Shift + Enter for new line': 'Shift + Enter — новая строка',
+  'Free plan': 'Бесплатный план',
+  'Pro plan': 'План Pro',
+  // Карточки сценариев на странице «Расписание» (новые строки)
+  'Compare this week\'s pricing and plan changes of leading AI products': 'Сравнение цен и изменений тарифов ведущих ИИ-продуктов за эту неделю',
+  'Draft a ready-to-paste weekly report from this week\'s chats': 'Готовый для вставки еженедельный отчёт из чатов этой недели',
+  'Plugin & connection health checks': 'Проверка плагинов и подключений',
+  // --- Конец дополнения №2 ---
   '- 3 remaining today': '- Осталось 3 на сегодня',
   '@New agent': '@Новый агент',
   '*Subject to fair use': '*При условии разумного использования',
@@ -420,7 +517,6 @@
   'Limited Offer Free $199 API credits': 'Ограниченное предложение: бесплатные кредиты API на $199',
   'Limited Offer Free $39 API credits': 'Ограниченное предложение: бесплатные кредиты API на $39',
   'Limits': 'Лимиты',
-  'Loading': 'Загрузка',
   'Localisation': 'Локализация',
   'Log in': 'Войти',
   'Log in with your student email to benefit from the student plan': 'Войдите в систему, указав свой студенческий e-mail, чтобы воспользоваться этим тарифным планом',
@@ -508,7 +604,6 @@
   'No payment method added yet.': 'Пока не добавлено ни одного способа оплаты.',
   'No plan is currently active on this organization, the API keys will not be active.': 'В настоящее время у этой организации нет активного плана, ключи API не будут активны.',
   'No related chat history': 'Нет истории связанных чатов',
-  'No results': 'Нет результатов',
   'No results found': 'Ничего не найдено',
   'No scheduled tasks set': 'Нет запланированных задач',
   'No thinking, instant answer': 'Без размышлений, мгновенный ответ',
@@ -737,7 +832,6 @@
   'Trash': 'Корзина',
   'travel experiences': 'моих путешествиях',
   'Trigger Word': 'Триггерное слово',
-  'Try again': 'Попробовать снова',
   'Type to add a new memory': 'Введите, чтобы добавить новое воспоминание',
   'Understand my daily habits and productivity tips': 'Понять мои ежедневные привычки и советы по продуктивности',
   'Unify your company data for instant, AI-powered search across everything.': 'Объедините данные вашей компании для мгновенного поиска с помощью ИИ по всем источникам.',
@@ -821,7 +915,343 @@
   'Zero data-retention is disabled': 'Функция отсутствия хранения данных отключена',
   'Zero data-retention is disabled for this organization. Troubleshooting and analytics data can be stored. Contact our sales to enable this option.': 'Функция отсутствия хранения данных отключена для этой организации. Данные для устранения неполадок и аналитики могут храниться. Обратитесь в отдел продаж, чтобы включить эту опцию.',
   'Всё, что передается, анонимизируется.': 'Всё передаваемое анонимизируется.',
+  // --- Дополнение 2 (30.10.2026, вечер): меню «+», расписание, общие строки ---
+  'Local files': 'Локальные файлы',
+  'Local file': 'Локальный файл',
+  'Back': 'Назад',
+  'Next': 'Далее',
+  'Done': 'Готово',
+  'All files': 'Все файлы',
+  'Recent': 'Недавние',
+  'Starred': 'Избранное',
+  'My files': 'Мои файлы',
+  'Upload from': 'Загрузить из',
+  'Google Drive': 'Google Диск',
+  'Sign out': 'Выйти',
+  'Invite': 'Пригласить',
+  'Storage': 'Хранилище',
+  'Attachments': 'Вложения',
+  'Attach files': 'Прикрепить файлы',
+  'Attach file': 'Прикрепить файл',
+  'Add photos': 'Добавить фото',
+  'Take screenshot': 'Сделать снимок экрана',
+  'Screenshot': 'Снимок экрана',
+  'Scheduled tasks': 'Запланированные задачи',
+  'New task': 'Новая задача',
+  'Run now': 'Запустить сейчас',
+  'Pause': 'Пауза',
+  'Resume': 'Возобновить',
+  'History': 'История',
+  'Activity': 'Активность',
+  'Untitled': 'Без названия',
+  'Untitled project': 'Проект без названия',
+  'Untitled chat': 'Чат без названия',
+  'Loading': 'Загрузка',
+  'Loading...': 'Загрузка…',
+  'No results': 'Ничего не найдено',
+  'Nothing here': 'Здесь пока ничего нет',
+  'Try again': 'Попробовать снова',
+  'Welcome back': 'С возвращением',
+  'Quick actions': 'Быстрые действия',
+  'Templates': 'Шаблоны',
+  'Cases': 'Сценарии',
+  'Skills': 'Навыки',
+  'Integrations': 'Интеграции',
+  'Connected': 'Подключено',
+  'Disconnect': 'Отключить',
+  'Manage': 'Управление',
+  'Configure': 'Настроить',
+  // Готовые сценарии на странице «Расписание»
+  'Competitor pricing weekly': 'Цены конкурентов — еженедельно',
+  "Compare this week's pricing and plan changes of leading AI products": 'Сравнение цен и тарифов ведущих ИИ-продуктов на этой неделе',
+  'Weekly report draft': 'Черновик еженедельного отчёта',
+  "Draft a ready-to-paste weekly report from this week's chats": 'Готовый еженедельный отчёт из чатов этой недели',
+  'Learning card: Agent products': 'Обучающая карточка: продукты-агенты',
+  'Create a 5-minute learning card on an Agent feature': 'Пятиминутная обучающая карточка о возможностях агентов',
+  'Website copy audit': 'Аудит текстов сайта',
+  'Find plan and price mismatches between our website and docs': 'Поиск расхождений по тарифам и ценам между сайтом и документацией',
+  'Plugin & connection health check': 'Проверка плагинов и подключений',
+  'Check enabled connections and plugins for issues': 'Проверка включённых подключений и плагинов на наличие проблем',
+  'Morning workspace digest': 'Утренняя сводка рабочего пространства',
+  "Summarize today's to-dos, scheduled tasks and open chats": 'Сводка задач на сегодня, запланированных дел и открытых чатов',
   };
+
+  // ==========================================
+  // ДИНАМИЧЕСКИЕ СТРОКИ (ШАБЛОНЫ)
+  // ==========================================
+  // Строки с переменными частями (время, числа) невозможно перевести по
+  // точному совпадению: «Every Monday at 09:30» уникально для каждого
+  // времени. Для них применяются регулярные выражения с функцией сборки
+  // русского текста (с правильными формами слов).
+  var WEEKDAY_ACC = {
+    'Monday': 'Каждый понедельник',
+    'Tuesday': 'Каждый вторник',
+    'Wednesday': 'Каждую среду',
+    'Thursday': 'Каждый четверг',
+    'Friday': 'Каждую пятницу',
+    'Saturday': 'Каждую субботу',
+    'Sunday': 'Каждое воскресенье'
+  };
+
+  // Русское склонение счётных существительных: 1 чат, 2 чата, 5 чатов.
+  function pluralRu(n, forms) {
+    var mod10 = n % 10, mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return forms[0];
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return forms[1];
+    return forms[2];
+  }
+
+  var COUNTABLES = {
+    'chat': ['чат', 'чата', 'чатов'],
+    'chats': ['чат', 'чата', 'чатов'],
+    'project': ['проект', 'проекта', 'проектов'],
+    'projects': ['проект', 'проекта', 'проектов'],
+    'task': ['задача', 'задачи', 'задач'],
+    'tasks': ['задача', 'задачи', 'задач'],
+    'file': ['файл', 'файла', 'файлов'],
+    'files': ['файл', 'файла', 'файлов'],
+    'message': ['сообщение', 'сообщения', 'сообщений'],
+    'messages': ['сообщение', 'сообщения', 'сообщений'],
+    'credit': ['кредит', 'кредита', 'кредитов'],
+    'credits': ['кредит', 'кредита', 'кредитов'],
+    'prompt': ['запрос', 'запроса', 'запросов'],
+    'prompts': ['запрос', 'запроса', 'запросов']
+  };
+
+  var COUNTABLE_RE = (function () {
+    var keys = [];
+    for (var k in COUNTABLES) keys.push(k);
+    return new RegExp('^(\\d+)\\s+(' + keys.join('|') + ')$');
+  })();
+
+  var PATTERNS = [
+    // «Every Monday at 09:30» -> «Каждый понедельник в 09:30»
+    { re: /^Every (Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday) at (\d{1,2}[:.]\d{2})$/,
+      fn: function (m) { return WEEKDAY_ACC[m[1]] + ' в ' + m[2]; } },
+    // «Weekdays at 08:30» -> «По будням в 08:30»
+    { re: /^Weekdays at (\d{1,2}[:.]\d{2})$/,
+      fn: function (m) { return 'По будням в ' + m[1]; } },
+    // «Weekends at 09:00» -> «По выходным в 09:00»
+    { re: /^Weekends at (\d{1,2}[:.]\d{2})$/,
+      fn: function (m) { return 'По выходным в ' + m[1]; } },
+    // «Every day at 09:00» -> «Каждый день в 09:00»
+    { re: /^Every day at (\d{1,2}[:.]\d{2})$/,
+      fn: function (m) { return 'Каждый день в ' + m[1]; } },
+    // «- 5 remaining today» -> «- Осталось 5 на сегодня»
+    { re: /^- (\d+) remaining today$/,
+      fn: function (m) { return '- Осталось ' + m[1] + ' на сегодня'; } },
+    // «5 remaining today» -> «Осталось 5 на сегодня»
+    { re: /^(\d+) remaining today$/,
+      fn: function (m) { return 'Осталось ' + m[1] + ' на сегодня'; } },
+    // «5 chats» / «2 projects» и т.п. -> со склонением: «5 чатов», «2 проекта»
+    { re: COUNTABLE_RE,
+      fn: function (m) { return m[1] + ' ' + pluralRu(parseInt(m[1], 10), COUNTABLES[m[2]]); } }
+  ];
+
+  // ==========================================
+  // ОНЛАЙН-АВТОПЕРЕВОДЧИК
+  // ==========================================
+  // Строки интерфейса, которых нет в словаре, отправляются в бесплатный
+  // сервис перевода (без ключей и регистрации). Результат сохраняется в
+  // localStorage: каждая строка переводится ОДИН раз, дальше — мгновенно
+  // из кэша, даже без интернета.
+  // НИКОГДА не отправляются: сообщения чата, код, markdown, вводимые тексты,
+  // строки с русскими буквами, ссылки, e-mail, названия моделей ИИ.
+  var MT = {
+    maxLen: 120,     // не отправляем строки длиннее 120 символов
+    maxTotal: 300,   // не более 300 запросов за один запуск приложения
+    sent: 0,
+    cache: null,     // en -> ru, загружается из localStorage при старте
+    pending: {},     // очередь строк на перевод
+    flushTimer: null,
+    // Пользовательский контент (названия чатов, переписка) не отправляем:
+    skipSelector: [
+      'textarea', 'input', '[contenteditable]', 'pre', 'code',
+      '[class*="markdown"]', '[class*="Markdown"]',
+      '[class*="chat-item"]', '[class*="chatItem"]',
+      '[class*="conversation"]', '[class*="session"]',
+      '[class*="history-item"]', '[class*="message"]', '[class*="Message"]'
+    ].join(',')
+  };
+
+  function mtStorage() {
+    try { return window.localStorage; } catch (e) { return null; }
+  }
+
+  function mtLoadCache() {
+    var st = mtStorage();
+    if (!st) return {};
+    try { return JSON.parse(st.getItem('zai-ru-mt-v1') || '{}') || {}; }
+    catch (e) { return {}; }
+  }
+
+  function mtSaveCache() {
+    var st = mtStorage();
+    if (!st) return;
+    try {
+      // Не даём кэшу расти бесконечно: при переполнении удаляем старую четверть
+      var keys = Object.keys(MT.cache);
+      if (keys.length > 800) {
+        keys.slice(0, 200).forEach(function (k) { delete MT.cache[k]; });
+      }
+      st.setItem('zai-ru-mt-v1', JSON.stringify(MT.cache));
+    } catch (e) { /* приватный режим — кэш только в памяти */ }
+  }
+
+  // Что точно НЕ нужно отправлять переводчику
+  var MT_NOT_SENDABLE = [
+    /^[^A-Za-z]*$/,                                    // нет латинских букв
+    /[А-Яа-яЁё]/,                                      // уже есть русские буквы
+    /https?:\/\/|www\.|[\w.+-]+@[\w.-]+/,             // ссылки и e-mail
+    /^(glm|gpt|k[0-9]|o[134]|claude|gemini|deepseek|qwen|llama|kimi|doubao|grok|mistral)[\w.+-]*$/i, // модели ИИ
+    /^[\d\s.,:;()\[\]{}\-+_=#%&*$€¥£?!/\\|<>~^'"`]+$/  // цифры и знаки
+  ];
+
+  function mtCanSend(text) {
+    if (!AUTO_TRANSLATE_ONLINE) return false;
+    if (MT.sent >= MT.maxTotal) return false;
+    if (!text || text.length > MT.maxLen) return false;
+    for (var i = 0; i < MT_NOT_SENDABLE.length; i++) {
+      if (MT_NOT_SENDABLE[i].test(text)) return false;
+    }
+    return true;
+  }
+
+  function mtQueue(text, node) {
+    if (!mtCanSend(text)) return;
+    var st = mtStorage();
+    if (st && st.getItem('zai-ru-mt') === 'off') return; // аварийное отключение
+    if (MT.cache[text]) {
+      // Перевод уже выучен — применяем сразу
+      try { node.nodeValue = node.nodeValue.replace(text, MT.cache[text]); } catch (e) {}
+      return;
+    }
+    // Не трогаем пользовательский контент (названия чатов и т.п.)
+    try {
+      if (node.parentElement && node.parentElement.closest(MT.skipSelector)) return;
+    } catch (e) { /* селектор валиден */ }
+    if (!MT.pending[text]) MT.pending[text] = [];
+    if (MT.pending[text].indexOf(node) === -1 && MT.pending[text].length < 5) {
+      MT.pending[text].push(node);
+    }
+    if (!MT.flushTimer) MT.flushTimer = setTimeout(mtFlush, 1200);
+  }
+
+  function mtFlush() {
+    MT.flushTimer = null;
+    var texts = [];
+    for (var t in MT.pending) {
+      texts.push(t);
+      if (texts.length >= 10) break; // пачками по 10 строк
+    }
+    texts.forEach(function (t) { mtRequest(t); });
+  }
+
+  function mtRequest(text) {
+    var nodes = MT.pending[text] || [];
+    delete MT.pending[text];
+    if (!nodes.length) return;
+    MT.sent++;
+    mtTryProviders(text, nodes, 0);
+  }
+
+  // Источники перевода: если первый недоступен, пробуем второй.
+  var MT_PROVIDERS = [
+    // 1. Google Translate — открытый бесплатный эндпоинт, без ключа
+    function (text, cb) {
+      fetch('https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=ru&dt=t&q=' +
+        encodeURIComponent(text))
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          try {
+            if (!d || !d[0]) return cb(null);
+            var out = '';
+            for (var i = 0; i < d[0].length; i++) {
+              if (d[0][i] && d[0][i][0]) out += d[0][i][0];
+            }
+            cb(out.trim() || null);
+          } catch (e) { cb(null); }
+        })
+        .catch(function () { cb(null); });
+    },
+    // 2. MyMemory — открытая переводческая память, без ключа
+    function (text, cb) {
+      fetch('https://api.mymemory.translated.net/get?q=' + encodeURIComponent(text) + '&langpair=en|ru')
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          try {
+            var t = d && d.responseData && d.responseData.translatedText;
+            if (t && /MYMEMORY WARNING/i.test(t)) return cb(null);
+            cb(t || null);
+          } catch (e) { cb(null); }
+        })
+        .catch(function () { cb(null); });
+    }
+  ];
+
+  function mtTryProviders(text, nodes, idx) {
+    if (idx >= MT_PROVIDERS.length) return; // все недоступны — тихо пропускаем
+    MT_PROVIDERS[idx](text, function (ru) {
+      if (ru && ru !== text) {
+        MT.cache[text] = ru;
+        mtSaveCache();
+        nodes.forEach(function (n) {
+          try { n.nodeValue = n.nodeValue.replace(text, ru); } catch (e) {}
+        });
+      } else {
+        mtTryProviders(text, nodes, idx + 1);
+      }
+    });
+  }
+
+  // ==========================================
+  // УДАЛЁННЫЙ СЛОВАРЬ (ОБНОВЛЕНИЕ БЕЗ ПЕРЕСБОРКИ)
+  // ==========================================
+  // Файл inject/dictionary.json подтягивается с вашего GitHub при каждом
+  // запуске приложения. Дополнили файл на GitHub → перезапустили приложение
+  // → новые переводы на месте. Пересборка .dmg больше НЕ требуется.
+  function applyRemoteDict(json) {
+    if (!json || typeof json !== 'object') return 0;
+    var added = 0;
+    for (var k in json) {
+      if (!k || k.charAt(0) === '_') continue; // служебные ключи пропускаем
+      if (typeof json[k] === 'string' && json[k] && !DICT[k]) {
+        DICT[k] = json[k];
+        added++;
+      }
+    }
+    return added;
+  }
+
+  function loadRemoteDict() {
+    var repo = REMOTE_DICT_REPO || '';
+    if (repo.indexOf('__REMOTE_DICT_REPO__') !== -1) return; // не подставлено — отключено
+    var st = mtStorage();
+    var branches = ['master', 'main'];
+    var attempt = function (i) {
+      if (i >= branches.length) {
+        // Нет сети? Применяем сохранённую копию словаря
+        if (st) {
+          try {
+            var saved = JSON.parse(st.getItem('zai-ru-remote-dict') || 'null');
+            if (saved && applyRemoteDict(saved)) scheduleTranslation();
+          } catch (e) { /* повреждённый кэш — игнорируем */ }
+        }
+        return;
+      }
+      fetch('https://raw.githubusercontent.com/' + repo + '/' + branches[i] +
+            '/inject/dictionary.json?t=' + Date.now())
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (json) {
+          var added = applyRemoteDict(json);
+          if (st) { try { st.setItem('zai-ru-remote-dict', JSON.stringify(json)); } catch (e) {} }
+          if (added) scheduleTranslation();
+          console.log('[Z.ai Desktop] Удалённый словарь: добавлено записей — ' + added);
+        })
+        .catch(function () { attempt(i + 1); });
+    };
+    attempt(0);
+  }
 
   // ==========================================
   // ДВИЖОК ПЕРЕВОДА
@@ -856,8 +1286,30 @@
     var ru = DICT[text];
     if (ru) return ru;
     var collapsed = text.replace(/\s+/g, ' ');
-    if (collapsed !== text) ru = DICT[collapsed];
-    return ru || null;
+    if (collapsed !== text) {
+      ru = DICT[collapsed];
+      if (ru) return ru;
+    }
+    // Типографский апостроф (’) встречается в надписях вида «this week’s».
+    // Сводим его к обычному и ищем ещё раз.
+    var normalized = collapsed.replace(/[\u2018\u2019\u02BC]/g, "'");
+    if (normalized !== collapsed) {
+      ru = DICT[normalized];
+      if (ru) return ru;
+    }
+    // Динамические строки (время расписания, счётчики) — по шаблонам.
+    for (var i = 0; i < PATTERNS.length; i++) {
+      var m = collapsed.match(PATTERNS[i].re);
+      if (m) {
+        try { return PATTERNS[i].fn(m); } catch (e) { return null; }
+      }
+    }
+    // 4. Выученные строки онлайн-переводчика.
+    if (MT.cache) {
+      ru = MT.cache[collapsed];
+      if (ru) return ru;
+    }
+    return null;
   }
 
   function isSkippable(node) {
@@ -889,6 +1341,9 @@
       if (ru && ru !== trimmed) {
         nodes[i].nodeValue = raw.replace(trimmed, function () { return ru; });
         count++;
+      } else if (ru === null) {
+        // В словаре нет — ставим в очередь онлайн-переводчику
+        mtQueue(trimmed, nodes[i]);
       }
     }
     return count;
@@ -1042,6 +1497,8 @@
   // ==========================================
   function init() {
     console.log('[Z.ai Desktop] Скрипт интерфейса загружен (русская локализация)');
+    MT.cache = mtLoadCache();
+    loadRemoteDict();
     markAsEnhanced();
     hideNavigationElements();
     adjustLayout();
