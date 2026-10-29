@@ -127,7 +127,7 @@ jobs:
   build-macos:
     needs: check
     if: needs.check.outputs.needs_build == 'true'
-    runs-on: macos-13
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
