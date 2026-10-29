@@ -187,7 +187,39 @@ function main() {
     { optional: true }
   );
 
+  injectRemoteDictSource();
+
   console.log('[RU] Готово: шаблон Pake локализован на русский язык.');
+}
+
+// ------------------------------------------------- удалённый словарь RU ---
+// Подставляем адрес текущего репозитория вместо '__REMOTE_DICT_REPO__' в
+// inject/app.js. Благодаря этому приложение при каждом запуске забирает
+// свежий inject/dictionary.json с GitHub: обновления перевода попадают в
+// программу простым редактированием файла — БЕЗ пересборки .dmg.
+function injectRemoteDictSource() {
+  try {
+    const appJsAbs = path.resolve(__dirname, '..', 'inject', 'app.js');
+    if (!fs.existsSync(appJsAbs)) {
+      console.log('[RU] inject/app.js не найден — подстановка словаря пропущена.');
+      return;
+    }
+    const repo = process.env.GITHUB_REPOSITORY || '';
+    if (!repo) {
+      console.log('[RU] GITHUB_REPOSITORY не задан (локальный запуск) — пропускаем.');
+      return;
+    }
+    let src = fs.readFileSync(appJsAbs, 'utf8');
+    if (src.indexOf('__REMOTE_DICT_REPO__') === -1) {
+      console.log('[RU] inject/app.js: источник словаря уже подставлен.');
+      return;
+    }
+    src = src.split('__REMOTE_DICT_REPO__').join(repo);
+    fs.writeFileSync(appJsAbs, src, 'utf8');
+    console.log('[RU] inject/app.js: удалённый словарь → ' + repo + '/inject/dictionary.json');
+  } catch (e) {
+    console.log('[RU] Ошибка подстановки словаря (не критично): ' + e.message);
+  }
 }
 
 main();
