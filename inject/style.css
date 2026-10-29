@@ -1,13 +1,13 @@
 /**
- * Z.ai Desktop - Custom Styles
- * Amélioration de l'interface sans barre de titre custom
+ * Z.ai Desktop — пользовательские стили
+ * Дополнение интерфейса без пользовательской строки заголовка
  */
 
 /* ============================================
-   CACHER LA BARRE DE NAVIGATION DU SITE
+   СКРЫТИЕ НАВИГАЦИОННОЙ ПАНЕЛИ САЙТА
    ============================================ */
 
-/* Cacher la barre de navigation de z.ai si présente */
+/* Скрыть панель навигации z.ai, если она есть */
 header,
 .nav-header,
 .top-header,
@@ -24,7 +24,7 @@ header,
 }
 
 /* ============================================
-   SCROLLBAR STYLÉE
+   СТИЛИЗОВАННАЯ ПОЛОСА ПРОКРУТКИ
    ============================================ */
 
 ::-webkit-scrollbar {
@@ -46,7 +46,7 @@ header,
 }
 
 /* ==========================================
-   MODE SOMBRE
+   ТЁМНАЯ ТЕМА
    ========================================== */
 
 @media (prefers-color-scheme: dark) {
